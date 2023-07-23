@@ -37,6 +37,26 @@ app.post('/api/add_character', async (req, res) => {
     }
 });
 
+app.delete('/api/delete_character/:character_id', async (req, res) => {
+  const characterId = req.params.character_id;
+
+  try {
+    const query = 'DELETE FROM anime_characters WHERE character_id = $1 RETURNING *';
+    const values = [characterId];
+
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Character not found' });
+    } else {
+      res.status(200).json({ message: 'Character deleted successfully', character: result.rows[0] });
+    }
+  } catch (err) {
+    console.error('Error executing query', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
