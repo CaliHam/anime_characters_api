@@ -1,10 +1,11 @@
-// server.js
 const express = require('express');
+const cors = require('cors');
 
-const pool = require('./db'); // Import the database connection pool
+const pool = require('./db');
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/', async (req, res) => {
@@ -26,7 +27,6 @@ app.post('/api/add_character', async (req, res) => {
   
       const result = await pool.query(query, values);
         
-      // Respond with the newly added character
 			res.status(201).json({
 				message: 'Character added successfully',
 				character: result.rows[0]
